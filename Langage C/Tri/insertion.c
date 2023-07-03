@@ -33,11 +33,15 @@ void triInsertion(int *tableau, int length){
     
     for(int i=1; i<length; i++){
         int j=i;
-        while(j>0 && tableau[j-1] > tableau[j]){
-            tableau[j] = tableau[j] + tableau[j-1];
-            tableau[j-1] = tableau[j] - tableau[j-1];
-            tableau[j] = tableau[j] - tableau[j-1];
-            j--;
-        }
+            do{
+                j--;
+            }while(j>0 && tableau[i]<tableau[j]);
+            if(tableau[i]<tableau[j]){
+                int temp = tableau[i];
+                for(int k=i; k>j; k--){
+                    tableau[k] = tableau[k-1];
+                }
+                tableau[j] = temp;
+            }
     }
 }
