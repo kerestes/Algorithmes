@@ -10,7 +10,7 @@ public class app {
 
         System.out.println("\nResolved Sudoku\n");
 
-        board.findSolution();
+        board.startResolution();
 
         board.printSudoku();
 

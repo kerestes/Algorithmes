@@ -33,7 +33,7 @@ public class Node {
     }
 
     public void setPossibilities(List<Integer> possibilities) {
-        this.possibilities = possibilities;
+        this.possibilities = new ArrayList<>(possibilities);
     }
 
     public void setConnectedNodes(List<Node> connectedNodes) {
