@@ -157,6 +157,42 @@ public class SudokuBoard {
     }
 
     private boolean verifyPossibilites(){
+        for (int i=0; i<base*base; i++){
+            for(int j=0; j<base*base; j++){
+                if(nodes[i][j].getPossibilities().size()==2){
+                    for(int k=0; k<3 ; k++){
+                        for(int m=0; m<base*base; m++){
+                            switch (k){
+                                case 0:
+                                    if(k!=i){
+                                        if(nodes[k][j].getPossibilities().size()==2 && nodes[i][j].getPossibilities().containsAll(nodes[k][j].getPossibilities())){
+                                            for(int n=0; n<base*base; n++){
+                                                if(n!= k && n!= i){
+                                                    nodes[n][j].getPossibilities().removeAll(nodes[k][j].getPossibilities());
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 1:
+                                    if(k!=j){
+                                        if(nodes[i][k].getPossibilities().size()==2 && nodes[i][j].getPossibilities().containsAll(nodes[i][k].getPossibilities())){
+                                            for(int n=0; n<base*base; n++){
+                                                if(n!= k && n!= j){
+                                                    nodes[i][n].getPossibilities().removeAll(nodes[i][k].getPossibilities());
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 2:
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         return false;
     }
 
