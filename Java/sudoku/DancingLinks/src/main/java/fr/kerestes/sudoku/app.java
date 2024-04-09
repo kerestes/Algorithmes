@@ -177,22 +177,22 @@ public class app {
         end = System.currentTimeMillis();
 
         System.out.println("Process time: " + (end - start));
-//
-//        System.out.println("----------------");
-//        System.out.println("New Sudoku - 16X16 - Hard");
-//        System.out.println("----------------");
-//
-//        board = new SudokuBoard("src/main/resources/sudoku_16X16_hard.csv");
-//        System.out.println(board.toString());
-//
-//        System.out.println("----------------");
-//        System.out.println("Resolved Sudoku - 16X16 - Hard");
-//        System.out.println("----------------");
-//
-//        start = System.currentTimeMillis();
-//        board.startAutomaticGame();
-//        end = System.currentTimeMillis();
-//
-//        System.out.println("Process time: " + (end - start));
+
+        System.out.println("----------------");
+        System.out.println("New Sudoku - 16X16 - Hard");
+        System.out.println("----------------");
+
+        board = new SudokuBoard("src/main/resources/sudoku_16X16_hard.csv");
+        System.out.println(board.toString());
+
+        System.out.println("----------------");
+        System.out.println("Resolved Sudoku - 16X16 - Hard");
+        System.out.println("----------------");
+
+        start = System.currentTimeMillis();
+        board.startAutomaticGame();
+        end = System.currentTimeMillis();
+
+        System.out.println("Process time: " + (end - start));
     }
 }

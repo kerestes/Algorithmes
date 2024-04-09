@@ -38,15 +38,13 @@ public class SudokuBoard {
 
     public void startAutomaticGame(){
         Player player = new Player(base, board);
-        try{
+        try {
             board = player.play();
-            if(verifyResult())
-                System.out.println(this);
-            else
-                System.out.println("Invalid Game");
-        } catch (InvalidSudoku e){
+            System.out.println(this);
+        } catch (InvalidSudoku e) {
             System.out.println(e.getMessage());
         }
+
     }
 
     private boolean verifyResult(){
