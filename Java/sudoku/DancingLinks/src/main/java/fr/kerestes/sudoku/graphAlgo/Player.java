@@ -11,40 +11,41 @@ public class Player {
 
     private int base;
     private int size;
-    private Integer[][] board;
     private ColumnHead columnHeadRoot;
-    List<Node> result;
+    private Integer[][] board;
+    private List<Node> result;
 
-    public Player(int base, Integer[][] board){
+    public Player(int base, ColumnHead columnHead, Integer[][] board){
+        this.columnHeadRoot = columnHead;
         this.base=base;
         this.size = base*base;
-        this.board=board;
+        this.board = board;
         result = new ArrayList<>();
-        createLinkedList();
         firstInsertion();
     }
 
     public Integer[][] play() throws InvalidSudoku {
         if(findAnswer()){
+            Integer[][] board = new Integer[size*size*size][size*size*4];
             for(int i=0; i<size*size; i++){
                 int row;
                 int column;
                 int value;
 
                 //If the node saved is a row
-                if(result.get(i).getValue()<size*size){
+                if(result.get(i).getHead().getName()<size*size){
                     row =  (int) findLine(result.get(i));
                     column =  (int) findColumn(result.get(i).getRightNode());
                     value = (int) findValue(result.get(i).getRightNode().getRightNode());
                 }
                 //If the node saved is a column
-                else if(result.get(i).getValue()<size*size*2){
+                else if(result.get(i).getHead().getName()<size*size*2){
                     column =  (int) findColumn(result.get(i));
                     value = (int) findValue(result.get(i).getRightNode());
                     row =  (int) findLine(result.get(i).getLeftNode());
                 }
                 //If the node saved is a value
-                else if(result.get(i).getValue()<size*size*3){
+                else if(result.get(i).getHead().getName()<size*size*3){
                     value = (int) findValue(result.get(i));
                     row =  (int) findLine(result.get(i).getLeftNode().getLeftNode());
                     column =  (int) findColumn(result.get(i).getLeftNode());
@@ -63,85 +64,6 @@ public class Player {
         }
     }
 
-
-    private void createLinkedList(){
-        Node[][] baseNodeTable = new Node[size*size*size][size*size*4];
-
-        for(int line=0; line<size*size*size; line++){
-            //To understand these calculations, look at the README table
-            int row= line%(size*size);
-            int column= line%size + (size * (line/(size*size)));
-            int value;
-            if(line%size + line/(size*size) >= size)
-                value = line%(size*size) + line/(size*size) - size;
-            else
-                value = line%(size*size) + line/(size*size);
-
-            int tempSquare = ((row/size)/base)*base + (column%size)/base;
-            int square = value%size + (tempSquare * size);
-
-            baseNodeTable[line][row] = new Node((long) row);
-            baseNodeTable[line][column + size*size] = new Node((long) column + size*size);
-            baseNodeTable[line][value + size*size*2] = new Node((long) value + size*size*2);
-            baseNodeTable[line][square + size*size*3] = new Node((long) square + size*size*3);
-        }
-
-        createColumnHeadLinkedList(baseNodeTable);
-    }
-
-    private void createColumnHeadLinkedList(Node[][] baseNodeTable){
-        for(int columnHeadCount=0; columnHeadCount<size*size*4; columnHeadCount++){
-            ColumnHead newColumnHead = new ColumnHead();
-            newColumnHead.setSize(size);
-
-            //Create the Headers for each column
-            if(columnHeadCount == 0){
-                columnHeadRoot = newColumnHead;
-                newColumnHead.setLeftNode(newColumnHead);
-                newColumnHead.setRightNode(newColumnHead);
-                newColumnHead.setUpNode(newColumnHead);
-                newColumnHead.setDownNode(newColumnHead);
-            } else {
-                newColumnHead.setRightNode(columnHeadRoot);
-                newColumnHead.setLeftNode(columnHeadRoot.getLeftNode());
-                columnHeadRoot.getLeftNode().setRightNode(newColumnHead);
-                columnHeadRoot.setLeftNode(newColumnHead);
-                newColumnHead.setUpNode(newColumnHead);
-                newColumnHead.setDownNode(newColumnHead);
-            }
-
-            //Connect nodes to Headers if there is a value
-            for(int row=0; row<size*size*size; row++){
-                if(baseNodeTable[row][columnHeadCount] != null){
-                    baseNodeTable[row][columnHeadCount].setHead(newColumnHead);
-                    baseNodeTable[row][columnHeadCount].setDownNode(newColumnHead);
-                    baseNodeTable[row][columnHeadCount].setUpNode(newColumnHead.getUpNode());
-                    newColumnHead.getUpNode().setDownNode(baseNodeTable[row][columnHeadCount]);
-                    newColumnHead.setUpNode(baseNodeTable[row][columnHeadCount]);
-                }
-            }
-        }
-
-        //Connect nodes sideways
-        for(int row=0; row<size*size*size; row++){
-            Node rootNode = null;
-            for(int column=0; column<size*size*4; column++){
-                if(baseNodeTable[row][column] != null){
-                    if(rootNode == null){
-                        rootNode = baseNodeTable[row][column];
-                        rootNode.setRightNode(rootNode);
-                        rootNode.setLeftNode(rootNode);
-                    }else{
-                        baseNodeTable[row][column].setRightNode(rootNode);
-                        baseNodeTable[row][column].setLeftNode(rootNode.getLeftNode());
-                        rootNode.getLeftNode().setRightNode(baseNodeTable[row][column]);
-                        rootNode.setLeftNode(baseNodeTable[row][column]);
-                    }
-                }
-            }
-        }
-    }
-
     private void firstInsertion(){
         for(int row=0; row<size; row++){
             for(int column=0; column<size; column++){
@@ -154,8 +76,15 @@ public class Player {
                             if(findColumn(node.getRightNode()) == column){
                                 do{
                                     if(findValue(node.getRightNode().getRightNode()) == board[row][column]){
+                                        ColumnHead insertColumnHead = node.getHead();
+                                        cover(insertColumnHead);
                                         result.add(node);
-                                        cover(node);
+
+                                        Node controlNode = node.getRightNode();
+                                        while(controlNode!=node){
+                                            cover(controlNode.getHead());
+                                            controlNode = controlNode.getRightNode();
+                                        }
                                         break;
                                     }
                                     node = node.getDownNode();
@@ -173,19 +102,27 @@ public class Player {
     private boolean findAnswer(){
         while (columnHeadRoot != columnHeadRoot.getRightNode()){
             ColumnHead columnHead = findLowestSize();
-            if(columnHeadRoot != columnHeadRoot.getRightNode()){
-                Node node = columnHead.getDownNode();
-                while(node != columnHead){
-                    result.add(node);
-                    cover(node);
-                    if(findAnswer()){
-                        return true;
-                    }
-                    result.remove(node);
-                    uncover(node);
-                    node = node.getDownNode();
+            cover(columnHead);
+            Node node = columnHead.getDownNode();
+            while(node != columnHead){
+                result.add(node);
+                Node controlNode = node.getRightNode();
+                while(node != controlNode){
+                    cover(controlNode.getHead());
+                    controlNode = controlNode.getRightNode();
                 }
+                if(findAnswer()){
+                    return true;
+                }
+                result.remove(node);
+                controlNode = node.getLeftNode();
+                while(controlNode != node){
+                    uncover(controlNode.getHead());
+                    controlNode = controlNode.getLeftNode();
+                }
+                node = node.getDownNode();
             }
+            uncover(columnHead);
             return false;
         }
         return true;
@@ -204,81 +141,52 @@ public class Player {
         return choseOne;
     }
 
-    private void cover(Node node){
-        ColumnHead rootColumn = node.getHead();
-        ColumnHead verifyRootColumn = rootColumn;
-        do{
-            coverHead(verifyRootColumn);
-            Node iterateNode = verifyRootColumn.getDownNode();
-            while (iterateNode != verifyRootColumn){
-                if(iterateNode != node)
-                    coverNode(iterateNode);
-                iterateNode = iterateNode.getDownNode();
-            }
-            node = node.getRightNode();
-            verifyRootColumn = node.getHead();
-        }while(rootColumn != verifyRootColumn);
-    }
-
-    private void coverHead(ColumnHead columnHead){
+    private void cover(ColumnHead columnHead){
         if(columnHead == columnHeadRoot)
-            columnHeadRoot = (ColumnHead) columnHead.getRightNode();
-        columnHead.getRightNode().setLeftNode(columnHead.getLeftNode());
+            columnHeadRoot = (ColumnHead) columnHeadRoot.getRightNode();
+
         columnHead.getLeftNode().setRightNode(columnHead.getRightNode());
-    }
+        columnHead.getRightNode().setLeftNode(columnHead.getLeftNode());
 
-    private void coverNode(Node node){
-        Node verifyNode = node.getRightNode();
-        while (verifyNode != node){
-            verifyNode.getUpNode().setDownNode(verifyNode.getDownNode());
-            verifyNode.getDownNode().setUpNode(verifyNode.getUpNode());
-            verifyNode.getHead().setSize(verifyNode.getHead().getSize() -1 );
-            verifyNode = verifyNode.getRightNode();
-        }
-    }
-
-    private void uncover(Node node){
-        ColumnHead rootColumn = node.getHead();
-        ColumnHead verifyRootColumn = rootColumn;
-        do{
-            Node iterateNode = verifyRootColumn.getUpNode();
-            while (iterateNode != verifyRootColumn){
-                if(iterateNode != node)
-                    uncoverNode(iterateNode);
-                iterateNode = iterateNode.getUpNode();
+        Node node = columnHead.getDownNode();
+        while(columnHead != node){
+            Node controlNode = node.getRightNode();
+            while(controlNode != node){
+                controlNode.getUpNode().setDownNode(controlNode.getDownNode());
+                controlNode.getDownNode().setUpNode(controlNode.getUpNode());
+                controlNode.getHead().setSize(controlNode.getHead().getSize() - 1);
+                controlNode = controlNode.getRightNode();
             }
-            uncoverHead(verifyRootColumn);
-            node = node.getLeftNode();
-            verifyRootColumn = node.getHead();
-        }while(rootColumn != verifyRootColumn);
-    }
-
-    private void uncoverHead(ColumnHead columnHead){
-        if(columnHead == columnHeadRoot)
-            columnHeadRoot = (ColumnHead) columnHead.getLeftNode();
-        columnHead.getRightNode().setLeftNode(columnHead);
-        columnHead.getLeftNode().setRightNode(columnHead);
-    }
-
-    private void uncoverNode(Node node){
-        Node verifyNode = node.getLeftNode();
-        while (verifyNode != node){
-            verifyNode.getUpNode().setDownNode(verifyNode);
-            verifyNode.getDownNode().setUpNode(verifyNode);
-            verifyNode.getHead().setSize(verifyNode.getHead().getSize() +1 );
-            verifyNode = verifyNode.getLeftNode();
+            node = node.getDownNode();
         }
     }
+
+    private void uncover(ColumnHead columnHead){
+        Node node = columnHead.getUpNode();
+        while(columnHead != node){
+            Node controlNode = node.getLeftNode();
+            while(controlNode != node){
+                controlNode.getHead().setSize(controlNode.getHead().getSize() + 1);
+                controlNode.getUpNode().setDownNode(controlNode);
+                controlNode.getDownNode().setUpNode(controlNode);
+                controlNode = controlNode.getLeftNode();
+            }
+            node = node.getUpNode();
+        }
+        columnHead.getLeftNode().setRightNode(columnHead);
+        columnHead.getRightNode().setLeftNode(columnHead);
+    }
+
     private long findLine(Node node){
-        return node.getValue()/size;
+        return node.getHead().getName()/size;
     }
 
     private long findColumn(Node node){
-        return node.getValue()%size;
+        return node.getHead().getName()%size;
     }
 
     private long findValue(Node node){
-        return node.getValue()%size+1;
+        return node.getHead().getName()%size+1;
     }
 
 }

@@ -4,8 +4,8 @@
 void triBubble(int *tableau, int len);
 
 int main(){
-    int arrayTest[300000];
-    int valeur = 300000;
+    int arrayTest[1000000];
+    int valeur = 1000000;
     
 
     for (int i = 0; i<sizeof(arrayTest)/sizeof(int); i++){
@@ -13,18 +13,14 @@ int main(){
         valeur--;
     }
 
-    clock_t debut = clock();
+    clock_t start = clock();
 
     int len = sizeof(arrayTest)/sizeof(arrayTest[0]);
     triBubble(arrayTest, len);
 
-    clock_t fin = clock();
+    clock_t end = clock();
 
-    printf("%f \n", (double)(fin - debut)/CLOCKS_PER_SEC);
-
-    /*for(int i=0; i<sizeof(arrayTest)/sizeof(int); i++){
-        printf("Elemento original %i  \n", arrayTest[i]);
-    }*/
+    printf("%f \n", (double)(end - start)/CLOCKS_PER_SEC);
 
     return 0;
 }

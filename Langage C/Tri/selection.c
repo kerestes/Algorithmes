@@ -4,17 +4,18 @@
 void triSelection(int * tableau, int len);
 
 int main(){
-    int arrayTest[300000];
-    int valeur = 300000;
+    int arrayTest[1000000];
+    int valeur = 1000000;
 
     for (int i = 0; i<sizeof(arrayTest)/sizeof(int); i++){
         arrayTest[i] = valeur;
         valeur--;
     }
 
+    int len = sizeof(arrayTest)/sizeof(arrayTest[0]);
+
     clock_t debut = clock();
 
-    int len = sizeof(arrayTest)/sizeof(arrayTest[0]);
     triSelection(arrayTest, len);
 
     clock_t fin = clock();

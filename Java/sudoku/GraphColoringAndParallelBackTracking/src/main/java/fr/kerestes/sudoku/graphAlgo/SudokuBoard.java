@@ -79,11 +79,15 @@ public class SudokuBoard {
 
     public void startAutomaticGame(){
         Player player = new Player(base, nodes);
+        Long start = System.currentTimeMillis();
         nodes = forkJoinPool.invoke(player);
-        if(nodes != null)
+        Long end = System.currentTimeMillis();
+        if(nodes != null){
             System.out.println(toString());
-        else
+            System.out.println("\nProcess time: " + (end - start) + "\n");
+        } else{
             System.out.println("Invalid Sudoku");
+        }
     }
 
     @Override

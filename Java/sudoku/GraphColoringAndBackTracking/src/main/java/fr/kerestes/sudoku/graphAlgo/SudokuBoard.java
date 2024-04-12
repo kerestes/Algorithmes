@@ -76,9 +76,13 @@ public class SudokuBoard {
 
     public void startAutomaticGame(){
         Player player = new Player(base, nodes);
+        Long start = System.currentTimeMillis();
         nodes = player.play();
-        if(nodes != null && verifyResult())
+        Long end = System.currentTimeMillis();
+        if(nodes != null && verifyResult()){
             System.out.println(toString());
+            System.out.println("\nProcess time: " + (end - start) + "\n");
+        }
         else
             System.out.println("Invalid Sudoku");
     }

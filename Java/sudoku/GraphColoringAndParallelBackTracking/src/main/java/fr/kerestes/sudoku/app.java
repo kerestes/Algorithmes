@@ -2,110 +2,30 @@ package fr.kerestes.sudoku;
 
 import fr.kerestes.sudoku.graphAlgo.SudokuBoard;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class app {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        SudokuBoard board = new SudokuBoard("src/main/resources/sudoku_9X9_easy_1.csv");
+        SudokuBoard board;
 
-        System.out.println("----------------");
-        System.out.println("New Sudoku - Easy");
-        System.out.println("----------------");
+        BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/Sudoku_Files_Name.csv"));
+        String fileName = "";
+        while((fileName = reader.readLine()) != null){
+            board = new SudokuBoard(fileName);
+            System.out.println("----------------");
+            System.out.println("New Sudoku - " + fileName);
+            System.out.println("----------------");
 
-        System.out.println(board.toString());
+            System.out.println(board.toString());
 
-        System.out.println("----------------");
-        System.out.println("Resolved Sudoku - Easy");
-        System.out.println("----------------");
+            System.out.println("----------------");
+            System.out.println("Resolved Sudoku ");
+            System.out.println("----------------");
 
-        Long start = System.currentTimeMillis();
-        board.startAutomaticGame();
-        Long end = System.currentTimeMillis();
-
-        System.out.println("Process time: " + (end - start));
-
-        System.out.println("----------------");
-        System.out.println("New Sudoku - Medium");
-        System.out.println("----------------");
-
-        board = new SudokuBoard("src/main/resources/sudoku_9X9_medium_1.csv");
-        System.out.println(board.toString());
-
-        System.out.println("----------------");
-        System.out.println("Resolved Sudoku - Medium");
-        System.out.println("----------------");
-
-        start = System.currentTimeMillis();
-        board.startAutomaticGame();
-        end = System.currentTimeMillis();
-
-        System.out.println("Process time: " + (end - start));
-
-        System.out.println("----------------");
-        System.out.println("New Sudoku - Hard");
-        System.out.println("----------------");
-
-        board = new SudokuBoard("src/main/resources/sudoku_9X9_hard_1.csv");
-        System.out.println(board.toString());
-
-        System.out.println("----------------");
-        System.out.println("Resolved Sudoku - Hard");
-        System.out.println("----------------");
-
-        start = System.currentTimeMillis();
-        board.startAutomaticGame();
-        end = System.currentTimeMillis();
-
-        System.out.println("Process time: " + (end - start));
-
-        System.out.println("----------------");
-        System.out.println("New Sudoku - 16X16 - Easy");
-        System.out.println("----------------");
-
-        board = new SudokuBoard("src/main/resources/sudoku_16X16_easy.csv");
-        System.out.println(board.toString());
-
-        System.out.println("----------------");
-        System.out.println("Resolved Sudoku - 16X16 - Easy");
-        System.out.println("----------------");
-
-        start = System.currentTimeMillis();
-        board.startAutomaticGame();
-        end = System.currentTimeMillis();
-
-        System.out.println("Process time: " + (end - start));
-
-        System.out.println("----------------");
-        System.out.println("New Sudoku - 16X16 - Medium");
-        System.out.println("----------------");
-
-        board = new SudokuBoard("src/main/resources/sudoku_16X16_medium.csv");
-        System.out.println(board.toString());
-
-        System.out.println("----------------");
-        System.out.println("Resolved Sudoku - 16X16 - Medium");
-        System.out.println("----------------");
-
-        start = System.currentTimeMillis();
-        board.startAutomaticGame();
-        end = System.currentTimeMillis();
-
-        System.out.println("Process time: " + (end - start));
-
-        System.out.println("----------------");
-        System.out.println("New Sudoku - 16X16 - Medium 2");
-        System.out.println("----------------");
-
-        board = new SudokuBoard("src/main/resources/sudoku_16X16_medium_2.csv");
-        System.out.println(board.toString());
-
-        System.out.println("----------------");
-        System.out.println("Resolved Sudoku - 16X16 - Medium 2");
-        System.out.println("----------------");
-
-        start = System.currentTimeMillis();
-        board.startAutomaticGame();
-        end = System.currentTimeMillis();
-
-        System.out.println("Process time: " + (end - start));
+            board.startAutomaticGame();
+        }
     }
 }

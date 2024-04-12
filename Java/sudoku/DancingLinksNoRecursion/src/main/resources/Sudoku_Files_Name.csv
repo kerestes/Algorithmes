@@ -1,0 +1,15 @@
+src/main/resources/sudoku_4X4_1.csv
+src/main/resources/sudoku_4X4_2.csv
+src/main/resources/sudoku_9X9_easy_1.csv
+src/main/resources/sudoku_9X9_medium_1.csv
+src/main/resources/sudoku_9X9_hard_1.csv
+src/main/resources/sudoku_9X9_hard_2.csv
+src/main/resources/sudoku_16X16_easy.csv
+src/main/resources/sudoku_16X16_easy_2.csv
+src/main/resources/sudoku_16X16_medium.csv
+src/main/resources/sudoku_16X16_medium_2.csv
+src/main/resources/sudoku_16X16_1.csv
+src/main/resources/sudoku_16X16_hard.csv
+src/main/resources/sudoku_25X25_easy.csv
+src/main/resources/sudoku_25X25_medium.csv
+src/main/resources/sudoku_25X25_hard_1.csv

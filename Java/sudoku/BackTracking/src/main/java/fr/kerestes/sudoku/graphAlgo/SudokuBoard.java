@@ -11,6 +11,9 @@ public class SudokuBoard {
     private SudokuRepository sudokuRepository;
     private Integer[][] board;
 
+    public SudokuBoard(){
+
+    }
     public SudokuBoard(String filePath){
         sudokuRepository = new SudokuRepository(filePath);
 
@@ -39,7 +42,11 @@ public class SudokuBoard {
     public void startAutomaticGame(){
         Player player = new Player(base, board);
         try{
+            Long start = System.currentTimeMillis();
             board = player.play();
+            Long end = System.currentTimeMillis();
+            System.out.println(this);
+            System.out.println("\nProcess time: " + (end - start) + "\n");
             if(verifyResult())
                 System.out.println(this);
             else
