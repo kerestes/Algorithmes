@@ -20,7 +20,7 @@ public class Player {
         this.base=base;
         this.size = base*base;
         this.board = board;
-        result = new ArrayList<>();
+        result = new ArrayList<>(base*base);
         firstInsertion();
     }
 
@@ -100,81 +100,81 @@ public class Player {
     }
 
     private boolean findAnswer(){
-        while (columnHeadRoot != columnHeadRoot.getRightNode()){
-            ColumnHead columnHead = findLowestSize();
-            cover(columnHead);
-            Node node = columnHead.getDownNode();
-            while(node != columnHead){
-                result.add(node);
-                Node controlNode = node.getRightNode();
-                while(node != controlNode){
-                    cover(controlNode.getHead());
-                    controlNode = controlNode.getRightNode();
+        if (columnHeadRoot != columnHeadRoot.getRightNode()){ // O(1)
+            ColumnHead columnHead = findLowestSize(); // O(1) - O(n)
+            cover(columnHead); // O(base² -1)  - O(base⁴ -2*base² +1)
+            Node node = columnHead.getDownNode(); // O(1)
+            while(node != columnHead){ //0(1) - O(base²)
+                result.add(node); // O(1)
+                Node controlNode = node.getRightNode(); // O(1)
+                while(node != controlNode){ // O(base² -1)
+                    cover(controlNode.getHead()); // O(base² -1)  - O(base⁴ -2*base² +1)
+                    controlNode = controlNode.getRightNode(); // O(1)
                 }
-                if(findAnswer()){
+                if(findAnswer()){ // T(n-4)
                     return true;
                 }
-                result.remove(node);
-                controlNode = node.getLeftNode();
-                while(controlNode != node){
-                    uncover(controlNode.getHead());
-                    controlNode = controlNode.getLeftNode();
+                result.remove(node); // O(1)
+                controlNode = node.getLeftNode(); // O(1)
+                while(controlNode != node){ // O(base² -1)
+                    uncover(controlNode.getHead()); // O(base² -1)  - O(base⁴ -2*base² +1)
+                    controlNode = controlNode.getLeftNode(); // O(1)
                 }
-                node = node.getDownNode();
+                node = node.getDownNode(); // O(1)
             }
-            uncover(columnHead);
+            uncover(columnHead); // O(base⁴)
             return false;
         }
-        return true;
+        return true; // O(1)
     }
 
     private ColumnHead findLowestSize(){
-        ColumnHead auxColumnHead = columnHeadRoot;
-        ColumnHead choseOne = auxColumnHead;
+        ColumnHead auxColumnHead = columnHeadRoot; //O(1)
+        ColumnHead choseOne = auxColumnHead; //O(1)
         do{
-            if(auxColumnHead.getSize() < choseOne.getSize())
-                choseOne = auxColumnHead;
-            if(auxColumnHead.getSize() == 1)
-                break;
-            auxColumnHead = (ColumnHead) auxColumnHead.getRightNode();
-        }while (auxColumnHead != columnHeadRoot);
-        return choseOne;
+            if(auxColumnHead.getSize() < choseOne.getSize()) //O(1)
+                choseOne = auxColumnHead; //O(1)
+            if(auxColumnHead.getSize() == 1) //O(1)
+                break; //O(1)
+            auxColumnHead = (ColumnHead) auxColumnHead.getRightNode(); //O(1)
+        }while (auxColumnHead != columnHeadRoot); // O(1) - O(n)
+        return choseOne; //O(1)
     }
 
-    private void cover(ColumnHead columnHead){
-        if(columnHead == columnHeadRoot)
-            columnHeadRoot = (ColumnHead) columnHeadRoot.getRightNode();
+    private void cover(ColumnHead columnHead){ // O(base² -1)  - O(base⁴ -2*base² +1)
+        if(columnHead == columnHeadRoot) //O(1)
+            columnHeadRoot = (ColumnHead) columnHeadRoot.getRightNode(); //O(1)
 
-        columnHead.getLeftNode().setRightNode(columnHead.getRightNode());
-        columnHead.getRightNode().setLeftNode(columnHead.getLeftNode());
+        columnHead.getLeftNode().setRightNode(columnHead.getRightNode()); //O(1)
+        columnHead.getRightNode().setLeftNode(columnHead.getLeftNode()); //O(1)
 
-        Node node = columnHead.getDownNode();
-        while(columnHead != node){
-            Node controlNode = node.getRightNode();
-            while(controlNode != node){
-                controlNode.getUpNode().setDownNode(controlNode.getDownNode());
-                controlNode.getDownNode().setUpNode(controlNode.getUpNode());
-                controlNode.getHead().setSize(controlNode.getHead().getSize() - 1);
+        Node node = columnHead.getDownNode(); //O(1)
+        while(columnHead != node){ //O(1) - O(base² -1)
+            Node controlNode = node.getRightNode(); //O(1)
+            while(controlNode != node){ //O(base² -1)
+                controlNode.getUpNode().setDownNode(controlNode.getDownNode()); //O(1)
+                controlNode.getDownNode().setUpNode(controlNode.getUpNode()); //O(1)
+                controlNode.getHead().setSize(controlNode.getHead().getSize() - 1); //O(1)
                 controlNode = controlNode.getRightNode();
             }
-            node = node.getDownNode();
+            node = node.getDownNode(); //O(1)
         }
     }
 
-    private void uncover(ColumnHead columnHead){
-        Node node = columnHead.getUpNode();
-        while(columnHead != node){
-            Node controlNode = node.getLeftNode();
-            while(controlNode != node){
-                controlNode.getHead().setSize(controlNode.getHead().getSize() + 1);
-                controlNode.getUpNode().setDownNode(controlNode);
-                controlNode.getDownNode().setUpNode(controlNode);
-                controlNode = controlNode.getLeftNode();
+    private void uncover(ColumnHead columnHead){ // O(base² -1)  - O(base⁴ -2*base² +1)
+        Node node = columnHead.getUpNode(); // O(1)
+        while(columnHead != node){ // O(1) - O(base² -1)
+            Node controlNode = node.getLeftNode(); // O(1)
+            while(controlNode != node){ // O(base² -1)
+                controlNode.getHead().setSize(controlNode.getHead().getSize() + 1); // O(1)
+                controlNode.getUpNode().setDownNode(controlNode); // O(1)
+                controlNode.getDownNode().setUpNode(controlNode); // O(1)
+                controlNode = controlNode.getLeftNode(); // O(1)
             }
-            node = node.getUpNode();
+            node = node.getUpNode(); // O(1)
         }
-        columnHead.getLeftNode().setRightNode(columnHead);
-        columnHead.getRightNode().setLeftNode(columnHead);
+        columnHead.getLeftNode().setRightNode(columnHead); // O(1)
+        columnHead.getRightNode().setLeftNode(columnHead); // O(1)
     }
 
     private long findLine(Node node){
