@@ -13,7 +13,7 @@ There are 5 sorting algorithms:
 
 ## Java
 
-There are the same 5 sorting algorithms and 5 algorithms to solve sudoku:
+There are 5 sorting algorithms and 6 algorithms to solve sudoku:
 
 * Sort
     * Bubble Sort
@@ -25,6 +25,7 @@ There are the same 5 sorting algorithms and 5 algorithms to solve sudoku:
 * Sudoku
     * Backtracking
     * Dancing Links
-    * Graph coloting with dancing links
+    * Dancing Links with graph coloring
+    * Dancing Lings non recursive
     * Graph coloring with backtracking
     * Graph coloring with parallel backtracking

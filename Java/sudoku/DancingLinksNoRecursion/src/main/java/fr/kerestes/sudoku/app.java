@@ -10,7 +10,7 @@ import java.io.IOException;
 public class app {
     public static void main(String[] args) throws IOException {
 
-        SudokuBoard board = new SudokuBoard();
+        SudokuBoard board;
 
         BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/Sudoku_Files_Name.csv"));
         String fileName = "";
@@ -20,13 +20,10 @@ public class app {
             System.out.println("New Sudoku - " + fileName);
             System.out.println("----------------");
 
-            System.out.println(board.toString());
-
-            System.out.println("----------------");
-            System.out.println("Resolved Sudoku ");
-            System.out.println("----------------");
-
             board.startAutomaticGame();
+
+            System.out.println("----------------");
         }
+        reader.close();
     }
 }

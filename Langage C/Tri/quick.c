@@ -5,11 +5,11 @@
 int * triRapide(int *tableau, int deb, int fin);
 
 int main(){
-    int valeur = 10;
+    int valeur = 500000;
     int arrayTest[valeur];
 
     for (int i = 0; i<sizeof(arrayTest)/sizeof(int); i++){
-        arrayTest[i] = i;
+        arrayTest[i] = valeur;
         valeur--;
     }
 
@@ -23,9 +23,7 @@ int main(){
 
     printf("%f \n", (double)(fin - debut)/CLOCKS_PER_SEC);
 
-    for(int i=0; i<len; i++){
-        printf("%i \n", arrayTest[i]);
-    }
+    
 
     return 0;
 }
@@ -53,7 +51,7 @@ int * triRapide(int * tableau, int deb, int fin){
             tableau[j] = tableau[j] - tableau[pivot];
         }
         
-        triRapide(tableau, deb, j-1);
+        triRapide(tableau, deb, j);
         triRapide(tableau, j+1, fin);
     }
 }

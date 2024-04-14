@@ -60,8 +60,7 @@ public class Player {
                             board[row][column] = l;
                             if(backtracking())
                                 return true;
-                            else
-                                board[row][column] = 0;
+                            board[row][column] = 0;
                         }
                     }
                     return false;
@@ -70,4 +69,5 @@ public class Player {
         }
         return true;
     }
+
 }

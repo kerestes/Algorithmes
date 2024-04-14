@@ -4,25 +4,25 @@ import fr.kerestes.sudoku.model.Node;
 import fr.kerestes.sudoku.repositories.SudokuRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SudokuBoard {
 
     private int base;
     private SudokuRepository sudokuRepository;
+    List<String> coordinates;
     private Node[][] nodes;
 
     public SudokuBoard(String filePath){
         sudokuRepository = new SudokuRepository(filePath);
 
-        List<String> nodesCoordinate = sudokuRepository.readFile();
+        coordinates = sudokuRepository.readFile();
 
-        this.base=Integer.parseInt(nodesCoordinate.get(0));
+        this.base=Integer.parseInt(coordinates.get(0));
         nodes = new Node[base*base][base*base];
         createGraph();
-        fillBoard(nodesCoordinate);
-
-
     }
 
     private void createGraph(){
@@ -67,24 +67,38 @@ public class SudokuBoard {
         }
     }
 
-    public void fillBoard(List<String> nodesCoordinate){
-        for(int i=1; i<nodesCoordinate.size(); i++){
-            String [] coord = nodesCoordinate.get(i).split(",");
-            nodes[Integer.parseInt(coord[0])][Integer.parseInt(coord[1])].setValue(Integer.parseInt(coord[2]));
+    public void fillBoard(int line){
+        List<Integer> coordinateNumbers = Arrays.stream(coordinates.get(line).split(",")).map(Integer::parseInt).collect(Collectors.toList());
+        for(int i=0; i<coordinateNumbers.size(); i++){
+            if(coordinateNumbers.get(i) > 0)
+                nodes[i/(base*base)][i%(base*base)].setValue(coordinateNumbers.get(i));
         }
     }
 
     public void startAutomaticGame(){
+        int i;
+        long max = Integer.MIN_VALUE, min = Integer.MAX_VALUE, avg = 0, time;
         Player player = new Player(base, nodes);
-        Long start = System.currentTimeMillis();
-        nodes = player.play();
-        Long end = System.currentTimeMillis();
-        if(nodes != null && verifyResult()){
-            System.out.println(toString());
-            System.out.println("\nProcess time: " + (end - start) + "\n");
+        for(i = 1; i<coordinates.size(); i++){
+            fillBoard(i);
+            Long start = System.nanoTime();
+            nodes = player.play();
+            Long end = System.nanoTime();
+            if(verifyResult()) {
+                time = (end - start);
+                if(min > time)
+                    min = time;
+                if(max < time)
+                    max = time;
+                avg +=time;
+                //System.out.println(this);
+                System.out.println("\nProcess time: " + time + "\n");
+            }else
+                System.out.println("Invalid Game");
         }
-        else
-            System.out.println("Invalid Sudoku");
+        System.out.println("Lowest time: " + min);
+        System.out.println("Highest time: " + max);
+        System.out.println("Average: " + (avg/i));
     }
 
     private boolean verifyResult(){

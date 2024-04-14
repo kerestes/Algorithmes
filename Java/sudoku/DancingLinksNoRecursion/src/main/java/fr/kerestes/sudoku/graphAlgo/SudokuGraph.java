@@ -44,32 +44,32 @@ public class SudokuGraph {
     private void createColumnHeadLinkedList(Node[][] baseNodeTable){
         for(int columnHeadCount=0; columnHeadCount<size*size*4; columnHeadCount++){
             ColumnHead newColumnHead = new ColumnHead(columnHeadCount);
-            newColumnHead.setSize(size);
+            newColumnHead.size = size;
 
             //Create the Headers for each column
             if(columnHeadCount == 0){
                 columnHeadRoot = newColumnHead;
-                newColumnHead.setLeftNode(newColumnHead);
-                newColumnHead.setRightNode(newColumnHead);
-                newColumnHead.setUpNode(newColumnHead);
-                newColumnHead.setDownNode(newColumnHead);
+                newColumnHead.leftNode = newColumnHead;
+                newColumnHead.rightNode = newColumnHead;
+                newColumnHead.upNode = newColumnHead;
+                newColumnHead.downNode = newColumnHead;
             } else {
-                newColumnHead.setRightNode(columnHeadRoot);
-                newColumnHead.setLeftNode(columnHeadRoot.getLeftNode());
-                columnHeadRoot.getLeftNode().setRightNode(newColumnHead);
-                columnHeadRoot.setLeftNode(newColumnHead);
-                newColumnHead.setUpNode(newColumnHead);
-                newColumnHead.setDownNode(newColumnHead);
+                newColumnHead.rightNode = columnHeadRoot;
+                newColumnHead.leftNode = columnHeadRoot.leftNode;
+                columnHeadRoot.leftNode.rightNode = newColumnHead;
+                columnHeadRoot.leftNode = newColumnHead;
+                newColumnHead.upNode = newColumnHead;
+                newColumnHead.downNode = newColumnHead;
             }
 
             //Connect nodes to Headers if there is a value
             for(int row=0; row<size*size*size; row++){
                 if(baseNodeTable[row][columnHeadCount] != null){
-                    baseNodeTable[row][columnHeadCount].setHead(newColumnHead);
-                    baseNodeTable[row][columnHeadCount].setDownNode(newColumnHead);
-                    baseNodeTable[row][columnHeadCount].setUpNode(newColumnHead.getUpNode());
-                    newColumnHead.getUpNode().setDownNode(baseNodeTable[row][columnHeadCount]);
-                    newColumnHead.setUpNode(baseNodeTable[row][columnHeadCount]);
+                    baseNodeTable[row][columnHeadCount].head = newColumnHead;
+                    baseNodeTable[row][columnHeadCount].downNode = newColumnHead;
+                    baseNodeTable[row][columnHeadCount].upNode = newColumnHead.upNode;
+                    newColumnHead.upNode.downNode = baseNodeTable[row][columnHeadCount];
+                    newColumnHead.upNode = baseNodeTable[row][columnHeadCount];
                 }
             }
         }
@@ -81,13 +81,13 @@ public class SudokuGraph {
                 if(baseNodeTable[row][column] != null){
                     if(rootNode == null){
                         rootNode = baseNodeTable[row][column];
-                        rootNode.setRightNode(rootNode);
-                        rootNode.setLeftNode(rootNode);
+                        rootNode.rightNode = rootNode;
+                        rootNode.leftNode = rootNode;
                     }else{
-                        baseNodeTable[row][column].setRightNode(rootNode);
-                        baseNodeTable[row][column].setLeftNode(rootNode.getLeftNode());
-                        rootNode.getLeftNode().setRightNode(baseNodeTable[row][column]);
-                        rootNode.setLeftNode(baseNodeTable[row][column]);
+                        baseNodeTable[row][column].rightNode = rootNode;
+                        baseNodeTable[row][column].leftNode = rootNode.leftNode;
+                        rootNode.leftNode.rightNode = baseNodeTable[row][column];
+                        rootNode.leftNode = baseNodeTable[row][column];
                     }
                 }
             }

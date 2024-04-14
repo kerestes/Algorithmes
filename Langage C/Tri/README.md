@@ -16,9 +16,9 @@ Exemple:
 ```
     A = 13, B = 7
 
-    A = A + B => A = 20;
-    B = A - B => B = 13;
-    A = A - B => A = 7;
+    A <- A + B    (A = 20);
+    B <- A - B    (B = 13);
+    A <- A - B    (A = 7);
 
     Final result:
     A = 7, B = 13
@@ -27,7 +27,9 @@ Exemple:
 ## Test machine configuration
 
 Motherboard - MSI B550-A PRO
+
 CPU - AMD Ryzen 5600G (3,9Ghz)
+
 RAM - 32Go (2x16Go) DDR4 3200MT
 
 ## Performance test method

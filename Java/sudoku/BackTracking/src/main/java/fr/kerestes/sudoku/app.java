@@ -18,13 +18,10 @@ public class app {
             System.out.println("New Sudoku - " + fileName);
             System.out.println("----------------");
 
-            System.out.println(board.toString());
-
-            System.out.println("----------------");
-            System.out.println("Resolved Sudoku ");
-            System.out.println("----------------");
-
             board.startAutomaticGame();
+
+            System.out.println("----------------");
         }
+        reader.close();
     }
 }
