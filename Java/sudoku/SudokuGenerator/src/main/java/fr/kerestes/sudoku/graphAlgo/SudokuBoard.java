@@ -5,6 +5,7 @@ import fr.kerestes.sudoku.repositories.SudokuRepository;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class SudokuBoard {
@@ -12,45 +13,68 @@ public class SudokuBoard {
     private int base;
     private SudokuRepository sudokuRepository;
     private Integer[][] board;
-    List<Integer> coordinates;
-    public SudokuBoard(){
-
-    }
+    List<String> coordinates;
     public SudokuBoard(String filePath){
         sudokuRepository = new SudokuRepository(filePath);
 
-        coordinates = generateCardinates();
+        coordinates = sudokuRepository.readFile();
 
-        this.base=2;
+        this.base=Integer.parseInt(coordinates.get(0));
         board = new Integer[base*base][base*base];
     }
 
-    public void fillBoard(int line){
+    public void mixedBoard(int times){
+        int choice, first, second, aux, size = base*base;
+        for(int i=0; i<times; i++){
+            Random random = new Random();
+            choice = random.nextInt(2);
+            do{
+                first = random.nextInt(size);
+                second = random.nextInt(base) + (base * (first/base));
+            }while(first == second);
+            if(choice%2 == 0){
+                for(int j=0; j<size; j++){
+                    aux = board[j][first];
+                    board[j][first] = board[j][second];
+                    board[j][second] = aux;
+                }
+            } else{
+                for(int j=0; j<size; j++){
+                    aux = board[first][j];
+                    board[first][j] = board[second][j];
+                    board[second][j] = aux;
+                }
+            }
+        }
+    }
+
+    public void generateGame(int parallelRemove, int clues, int mixTimes){
+        for(int i = 1; i<coordinates.size(); i++){
+            fillBoard(i);
+            SudokuBoardCreator sudokuBoardCreator = new SudokuBoardCreator(base, board);
+            mixedBoard(mixTimes);
+            try{
+                board = sudokuBoardCreator.create(parallelRemove, clues);
+                String result = Arrays.stream(board).flatMap(Arrays::stream).map(String::valueOf).reduce("", (a,b) -> {
+                   if(a.equals(""))
+                       return b;
+                   else
+                       return a+","+b;
+                });
+                sudokuRepository.writeFile("src/main/resources/test", result);
+                System.out.println(result);
+            } catch (InvalidSudoku e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private void fillBoard(int line){
         List<Integer> coordinateNumbers = Arrays.stream(coordinates.get(line).split(",")).map(Integer::parseInt).collect(Collectors.toList());
         for(int i=0; i<coordinateNumbers.size(); i++){
             board[i/(base*base)][i%(base*base)] = coordinateNumbers.get(i);
         }
     }
-
-    public void startAutomaticGame(){
-        for(int i = 1; i<coordinates.size(); i++){
-            fillBoard(i);
-            SudokuGraph graph = new SudokuGraph(base, board);
-            Player player = new Player(base, graph.getColumnHeadRoot(), board);
-            try{
-                board = player.play();
-                String result = coordinates.stream().map(n -> String.valueOf(n)).collect(Collectors.joining(","));
-                sudokuRepository.writeFile(result);
-                System.out.println("There is more then one possibility");
-            } catch (InvalidSudoku e){
-                System.out.println("There is just one possibility");
-            }
-        }
-    }
-
-   private List<> generateCardinates(){
-
-   }
 
     @Override
     public String toString(){

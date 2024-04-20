@@ -34,15 +34,16 @@ public class SudokuBoard {
 
     public void startAutomaticGame(){
         int i;
-        long max = Integer.MIN_VALUE, min = Integer.MAX_VALUE, avg = 0, time;
+        long max = Integer.MIN_VALUE, min = Integer.MAX_VALUE, start, end, initialTime, finalTime, avg = 0, time;
+        initialTime = System.nanoTime();
         for(i = 1; i<coordinates.size(); i++){
             fillBoard(i);
             SudokuGraph graph = new SudokuGraph(base, board);
             Player player = new Player(base, graph.getColumnHeadRoot(), board);
             try{
-                Long start = System.nanoTime();
+                start = System.nanoTime();
                 board = player.play();
-                Long end = System.nanoTime();
+                end = System.nanoTime();
                 if(verifyResult()) {
                     time = (end - start);
                     if(min > time)
@@ -51,16 +52,19 @@ public class SudokuBoard {
                         max = time;
                     avg +=time;
                     //System.out.println(this);
-                    System.out.println("Process time: " + time + "\n");
+                    System.out.println("Process time: " + time + " at line " + i);
                 }else
                     System.out.println("Invalid Game");
+                System.out.println("----------------------------------------------------------" + "\n");
             } catch (InvalidSudoku e){
                 System.out.println(e.getMessage());
             }
         }
+        finalTime= System.nanoTime();
         System.out.println("Lowest time: " + min);
         System.out.println("Highest time: " + max);
         System.out.println("Average: " + (avg/(i-1)));
+        System.out.println("Total process time: " + (finalTime - initialTime));
     }
 
     private boolean verifyResult(){

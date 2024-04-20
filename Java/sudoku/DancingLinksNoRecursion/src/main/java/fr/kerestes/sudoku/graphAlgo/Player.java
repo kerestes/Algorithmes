@@ -101,23 +101,36 @@ public class Player {
     }
 
     private boolean findAnswer(){
+        ColumnHead columnHead;
+        Node node, controlNode;
         while (columnHeadRoot != columnHeadRoot.rightNode){
-            
-            ColumnHead columnHead = findLowestSize();
-            Node node = columnHead;
+            columnHead = findLowestSize();
+            node = columnHead;
 
             if( columnHead == columnHead.downNode){
                 node = result.get(result.size() -1);
                 while(node.head.choice == node.head.size){
-                    makeUncover(node);
+                    result.remove(node);
+                    controlNode = node.leftNode;
+                    while(controlNode != node){
+                        uncover(controlNode.head);
+                        controlNode = controlNode.leftNode;
+                    }
+                    uncover(node.head);
                     node.head.choice = 0;
                     node = result.get(result.size() -1);
                 }
-                
+
                 if(node.head.choice == Integer.MAX_VALUE)
                     return false;
 
-                makeUncover(node);
+                result.remove(node);
+                controlNode = node.leftNode;
+                while(controlNode != node){
+                    uncover(controlNode.head);
+                    controlNode = controlNode.leftNode;
+                }
+                uncover(node.head);
             }
 
             if(node != columnHead)
@@ -125,7 +138,13 @@ public class Player {
 
             columnHead.choice = columnHead.choice +1;
             node = node.downNode;
-            makeCover(node);
+            cover(node.head);
+            result.add(node);
+            controlNode = node.rightNode;
+            while(node != controlNode){
+                cover(controlNode.head);
+                controlNode = controlNode.rightNode;
+            }
 
         }
         return true;
