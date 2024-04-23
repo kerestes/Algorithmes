@@ -13,7 +13,7 @@ public class Player {
     }
 
     public Integer[][] play() throws InvalidSudoku {
-        if(backtracking())
+        if(backtracking(0, 0))
             return board;
         else
             throw new InvalidSudoku("Invalid Game");
@@ -51,23 +51,26 @@ public class Player {
                 && verifySquare(row, column, value);
     }
 
-    private boolean backtracking(){
-        for(int row=0; row<base*base; row++){
-            for(int column=0; column<base*base; column++){
-                if(board[row][column] == 0){
-                    for(int l=1; l<=base*base; l++){
-                        if(isAvailableNumber(row, column, l)){
+    private boolean backtracking(int row, int column){
+        while (row<base*base){ //O(n)
+            while (column<base*base){ //O(n)
+                if(board[row][column] == 0){ // O(1)
+                    for(int l=1; l<=base*base; l++){ //O(n)
+                        if(isAvailableNumber(row, column, l)){ //3*O(n)
                             board[row][column] = l;
-                            if(backtracking())
-                                return true;
-                            board[row][column] = 0;
+                            if(backtracking(row, column+1)) // T(n) = T(n)
+                                return true; //O(1)
+                            board[row][column] = 0; // O(1)
                         }
                     }
-                    return false;
+                    return false; // O(1)
                 }
+                column++;
             }
+            column= 0;
+            row++;
         }
-        return true;
+        return true; // O(1)
     }
 
 }

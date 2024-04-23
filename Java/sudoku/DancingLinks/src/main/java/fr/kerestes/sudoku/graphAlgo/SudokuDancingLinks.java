@@ -7,7 +7,7 @@ import fr.kerestes.sudoku.models.Node;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class SudokuDancingLinks {
 
     private int base;
     private int size;
@@ -15,7 +15,7 @@ public class Player {
     private Integer[][] board;
     private List<Node> result;
 
-    public Player(int base, ColumnHead columnHead, Integer[][] board){
+    public SudokuDancingLinks(int base, ColumnHead columnHead, Integer[][] board){
         this.columnHeadRoot = columnHead;
         this.base=base;
         this.size = base*base;
@@ -25,7 +25,7 @@ public class Player {
     }
 
     public Integer[][] play() throws InvalidSudoku {
-        if(findAnswer()){
+        if(search()){
             Integer[][] board = new Integer[size*size*size][size*size*4];
             for(int i=0; i<size*size; i++){
                 int row;
@@ -99,30 +99,30 @@ public class Player {
         }
     }
 
-    private boolean findAnswer(){
+    private boolean search(){
         if (columnHeadRoot != columnHeadRoot.rightNode){ // O(1)
-            ColumnHead columnHead = findLowestSize(); // O(1) - O(n)
-            cover(columnHead); // O(base² -1)  - O(base⁴ -2*base² +1)
+            ColumnHead columnHead = findLowestSize(); // O(1) - O(4n²)
+            cover(columnHead); // O(1)  - O(n)
             Node node = columnHead.downNode; // O(1)
-            while(node != columnHead){ //0(1) - O(base²)
+            while(node != columnHead){ //0(1) - O(n)
                 result.add(node); // O(1)
                 Node controlNode = node.rightNode; // O(1)
-                while(node != controlNode){ // O(base² -1)
-                    cover(controlNode.head); // O(base² -1)  - O(base⁴ -2*base² +1)
+                while(node != controlNode){ // O(1) - O(4n)
+                    cover(controlNode.head); // O(1)  - O(n)
                     controlNode = controlNode.rightNode; // O(1)
                 }
-                if(findAnswer()){ // T(n-4)
+                if(search()){ // T(n-4)
                     return true;
                 }
                 result.remove(node); // O(1)
                 controlNode = node.leftNode; // O(1)
-                while(controlNode != node){ // O(base² -1)
-                    uncover(controlNode.head); // O(base² -1)  - O(base⁴ -2*base² +1)
+                while(controlNode != node){ // O(1) - O(4n)
+                    uncover(controlNode.head); // O(1) - O(n)
                     controlNode = controlNode.leftNode; // O(1)
                 }
                 node = node.downNode; // O(1)
             }
-            uncover(columnHead); // O(base⁴)
+            uncover(columnHead); // 0(1) - O(n)
             return false;
         }
         return true; // O(1)
@@ -141,7 +141,7 @@ public class Player {
         return choseOne; //O(1)
     }
 
-    private void cover(ColumnHead columnHead){ // O(base² -1)  - O(base⁴ -2*base² +1)
+    private void cover(ColumnHead columnHead){ // O(1)  - O(n)
         if(columnHead == columnHeadRoot) //O(1)
             columnHeadRoot = (ColumnHead) columnHeadRoot.rightNode; //O(1)
 
@@ -149,9 +149,9 @@ public class Player {
         columnHead.rightNode.leftNode = columnHead.leftNode; //O(1)
 
         Node node = columnHead.downNode; //O(1)
-        while(columnHead != node){ //O(1) - O(base² -1)
+        while(columnHead != node){ //O(1) - O(n)
             Node controlNode = node.rightNode; //O(1)
-            while(controlNode != node){ //O(base² -1)
+            while(controlNode != node){ //O(1) - 4 times
                 controlNode.upNode.downNode = controlNode.downNode; //O(1)
                 controlNode.downNode.upNode = controlNode.upNode; //O(1)
                 controlNode.head.size = controlNode.head.size - 1; //O(1)
@@ -161,11 +161,11 @@ public class Player {
         }
     }
 
-    private void uncover(ColumnHead columnHead){ // O(base² -1)  - O(base⁴ -2*base² +1)
+    private void uncover(ColumnHead columnHead){ // O(1)  - O(n)
         Node node = columnHead.upNode; // O(1)
-        while(columnHead != node){ // O(1) - O(base² -1)
+        while(columnHead != node){ // O(1) - O(n)
             Node controlNode = node.leftNode; // O(1)
-            while(controlNode != node){ // O(base² -1)
+            while(controlNode != node){ // O(1) - 4 times
                 controlNode.head.size = controlNode.head.size + 1; // O(1)
                 controlNode.upNode.downNode = controlNode; // O(1)
                 controlNode.downNode.upNode = controlNode; // O(1)

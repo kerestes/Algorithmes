@@ -38,11 +38,11 @@ public class SudokuBoard {
         initialTime = System.nanoTime();
         for(i = 1; i<coordinates.size(); i++){
             fillBoard(i);
-            SudokuGraph graph = new SudokuGraph(base, board);
-            Player player = new Player(base, graph.getColumnHeadRoot(), board);
+            SudokuCreateGraph graph = new SudokuCreateGraph(base, board);
+            SudokuDancingLinks sudokuDancingLinks = new SudokuDancingLinks(base, graph.getColumnHeadRoot(), board);
             try{
                 start = System.nanoTime();
-                board = player.play();
+                board = sudokuDancingLinks.play();
                 end = System.nanoTime();
                 if(verifyResult()) {
                     time = (end - start);

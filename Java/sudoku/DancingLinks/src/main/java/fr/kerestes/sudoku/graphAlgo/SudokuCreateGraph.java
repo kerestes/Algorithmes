@@ -3,13 +3,13 @@ package fr.kerestes.sudoku.graphAlgo;
 import fr.kerestes.sudoku.models.ColumnHead;
 import fr.kerestes.sudoku.models.Node;
 
-public class SudokuGraph {
+public class SudokuCreateGraph {
     private int base;
     private int size;
     private Integer[][] board;
     private ColumnHead columnHeadRoot;
 
-    public SudokuGraph(int base, Integer[][] board){
+    public SudokuCreateGraph(int base, Integer[][] board){
         this.base = base;
         this.board = board;
         this.size = base*base;

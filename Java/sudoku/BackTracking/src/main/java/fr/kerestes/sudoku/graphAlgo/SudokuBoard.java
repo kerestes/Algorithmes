@@ -47,7 +47,7 @@ public class SudokuBoard {
                     if(max < time)
                         max = time;
                     avg +=time;
-                    //System.out.println(this);
+                    System.out.println(this);
                     System.out.println("\nProcess time: " + time + "\n");
                 }else
                     System.out.println("Invalid Game");
